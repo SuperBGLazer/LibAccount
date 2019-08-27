@@ -26,6 +26,10 @@ public class Password {
      * Computes a salted PBKDF2 hash of given plaintext password
      * suitable for storing in a database.
      * Empty passwords are not supported.
+     * @param password The password
+     * @return The salted password hash
+     * @throws InvalidKeySpecException When there is some sort of system error
+     * @throws NoSuchAlgorithmException When there is some sort of system error
      */
     public static String getSaltedHash(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
         byte[] salt = SecureRandom.getInstance("SHA1PRNG").generateSeed(saltLen);
@@ -36,6 +40,11 @@ public class Password {
     /**
      * Checks whether given plaintext password corresponds
      * to a stored salted hash of the password.
+     * @param password The plain text password
+     * @param stored The hashed password
+     * @return True if the password is correct
+     * @throws InvalidKeySpecException When there is some sort of system error
+     * @throws NoSuchAlgorithmException When there is some sort of system error
      */
     public static boolean check(String password, String stored) throws InvalidKeySpecException, NoSuchAlgorithmException {
         String[] saltAndHash = stored.split("\\$");
