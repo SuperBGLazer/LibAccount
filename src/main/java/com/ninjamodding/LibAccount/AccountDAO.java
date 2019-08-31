@@ -18,9 +18,9 @@ import java.util.UUID;
 
 public class AccountDAO {
     private static AccountDAO instance;
-    private Connection connection;
-    private EmailUtil email;
-    private DatabaseUtil database;
+    private static Connection connection;
+    private static EmailUtil email;
+    private static DatabaseUtil database;
 
     public static AccountDAO setup(Connection databaseConnection, EmailUtil emailUtil, DatabaseUtil databaseUtil) {
         instance = new AccountDAO(databaseConnection, databaseUtil, emailUtil);
