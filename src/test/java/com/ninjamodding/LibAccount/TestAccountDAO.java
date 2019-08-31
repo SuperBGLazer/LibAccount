@@ -1,6 +1,5 @@
 package com.ninjamodding.LibAccount;
 
-import com.mysql.cj.jdbc.MysqlDataSource;
 import com.ninjamodding.LibAccount.utils.DatabaseUtil;
 import com.ninjamodding.LibAccount.utils.EmailUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +15,8 @@ class TestAccountDAO {
 
     @BeforeEach
     void setUp() {
-        emailUtil = account -> {};
+        emailUtil = account -> {
+        };
         databaseUtil = new DatabaseUtilTest();
     }
 

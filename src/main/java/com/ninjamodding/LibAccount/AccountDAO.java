@@ -22,15 +22,6 @@ public class AccountDAO {
     private static EmailUtil email;
     private static DatabaseUtil database;
 
-    public static AccountDAO setup(Connection databaseConnection, EmailUtil emailUtil, DatabaseUtil databaseUtil) {
-        instance = new AccountDAO(databaseConnection, databaseUtil, emailUtil);
-        return instance;
-    }
-
-    public static AccountDAO getInstance() {
-        return instance;
-    }
-
     @Deprecated
     public AccountDAO(Connection databaseConnection, DatabaseUtil databaseUtil, EmailUtil emailUtil) {
         if (databaseConnection == null) {
@@ -44,6 +35,15 @@ public class AccountDAO {
         }
         email = emailUtil;
         database = databaseUtil;
+    }
+
+    public static AccountDAO setup(Connection databaseConnection, EmailUtil emailUtil, DatabaseUtil databaseUtil) {
+        instance = new AccountDAO(databaseConnection, databaseUtil, emailUtil);
+        return instance;
+    }
+
+    public static AccountDAO getInstance() {
+        return instance;
     }
 
     private void connect() throws SQLException {
