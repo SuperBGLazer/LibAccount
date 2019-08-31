@@ -85,9 +85,9 @@
     </build>
 
     <scm>
-        <connection>scm:git:git://github.com/SuperBGLazer/LibAccount.git</connection>
-        <developerConnection>scm:git:git@github.com:SuperBGLazer/LibAccount.git</developerConnection>
-        <url>https://github.com/SuperBGLazer/LibAccount</url>
+        <connection>scm:git:git://github.com/ninja-modding/LibAccount.git</connection>
+        <developerConnection>scm:git:git@github.com:ninja-modding/LibAccount.git</developerConnection>
+        <url>https://github.com/ninja-modding/LibAccount</url>
         <tag>HEAD</tag>
     </scm>
 
