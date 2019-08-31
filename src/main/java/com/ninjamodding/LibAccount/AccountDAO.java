@@ -10,10 +10,7 @@ import com.ninjamodding.LibAccount.utils.EmailUtil;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.UUID;
 
 public class AccountDAO {
@@ -21,6 +18,19 @@ public class AccountDAO {
     private static Connection connection;
     private static EmailUtil email;
     private static DatabaseUtil database;
+
+    private static final String CREATE_TABLE = "CREATE TABLE `accounts` (\n" +
+            "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+            "  `firstName` varchar(255) DEFAULT NULL,\n" +
+            "  `lastName` varchar(255) DEFAULT NULL,\n" +
+            "  `email` varchar(255) NOT NULL,\n" +
+            "  `password` varchar(255) DEFAULT NULL,\n" +
+            "  `activated` tinyint(1) DEFAULT NULL,\n" +
+            "  `developer` tinyint(1) DEFAULT '0',\n" +
+            "  PRIMARY KEY (`id`),\n" +
+            "  UNIQUE KEY `accounts_email_uindex` (`email`),\n" +
+            "  KEY `id` (`id`)\n" +
+            ") ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;";
 
     @Deprecated
     public AccountDAO(Connection databaseConnection, DatabaseUtil databaseUtil, EmailUtil emailUtil) {
@@ -85,6 +95,9 @@ public class AccountDAO {
                 ex.printStackTrace();
             }
             return authenticateUser(email, password, ip);
+        } catch (SQLSyntaxErrorException e) {
+            createTable();
+            return authenticateUser(email, password, ip);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | SQLException e) {
             e.printStackTrace();
             return null;
@@ -107,6 +120,9 @@ public class AccountDAO {
                 ex.printStackTrace();
             }
             return getUser(id);
+        } catch (SQLSyntaxErrorException e) {
+            createTable();
+            return getUser(id);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -127,6 +143,9 @@ public class AccountDAO {
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
+            return getUser(email);
+        } catch (SQLSyntaxErrorException e) {
+            createTable();
             return getUser(email);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -183,6 +202,9 @@ public class AccountDAO {
                 ex.printStackTrace();
             }
             return createUser(userEmail, password, firstName, lastName);
+        } catch (SQLSyntaxErrorException e) {
+            createTable();
+            return createUser(userEmail, password, firstName, lastName);
         } catch (SQLException | InvalidKeySpecException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -221,6 +243,9 @@ public class AccountDAO {
                 ex.printStackTrace();
             }
             return activateAccount(token);
+        } catch (SQLSyntaxErrorException e) {
+            createTable();
+            activateAccount(token);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -245,10 +270,29 @@ public class AccountDAO {
                 ex.printStackTrace();
             }
             return getID(email);
+        } catch (SQLSyntaxErrorException e) {
+            createTable();
+            return getID(email);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return -1;
+    }
+
+    private void createTable() {
+        try {
+            Statement statement = connection.createStatement();
+            statement.execute(CREATE_TABLE);
+        } catch (CommunicationsException | NullPointerException e) {
+            try {
+                connect();
+                createTable();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }
