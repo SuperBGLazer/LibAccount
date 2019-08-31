@@ -1,7 +1,8 @@
 package com.ninjamodding.LibAccount.utils;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 public interface DatabaseUtil {
-    void connectToMain() throws SQLException;
+    Connection connectToMain(Connection nullConnection) throws SQLException;
 }

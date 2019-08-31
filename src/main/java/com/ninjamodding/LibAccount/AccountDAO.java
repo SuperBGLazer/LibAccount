@@ -5,7 +5,6 @@
 package com.ninjamodding.LibAccount;
 
 import com.mysql.cj.jdbc.exceptions.CommunicationsException;
-import com.ninjamodding.LibAccount.exceptions.DatabaseException;
 import com.ninjamodding.LibAccount.utils.DatabaseUtil;
 import com.ninjamodding.LibAccount.utils.EmailUtil;
 
@@ -18,25 +17,40 @@ import java.sql.Statement;
 import java.util.UUID;
 
 public class AccountDAO {
-    private static Connection connection;
-    private static EmailUtil email;
-    private static DatabaseUtil database;
+    private static AccountDAO instance;
+    private Connection connection;
+    private EmailUtil email;
+    private DatabaseUtil database;
 
-    @Deprecated
-    public AccountDAO() {
+    public static AccountDAO setup(Connection databaseConnection, EmailUtil emailUtil, DatabaseUtil databaseUtil) {
+        instance = new AccountDAO(databaseConnection, databaseUtil, emailUtil);
+        return instance;
     }
 
-    public static void setup(Connection databaseConnection, EmailUtil emailUtil, DatabaseUtil databaseUtil) {
-        connection = databaseConnection;
+    public static AccountDAO getInstance() {
+        return instance;
+    }
+
+    @Deprecated
+    public AccountDAO(Connection databaseConnection, DatabaseUtil databaseUtil, EmailUtil emailUtil) {
+        if (databaseConnection == null) {
+            try {
+                connect();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            connection = databaseConnection;
+        }
         email = emailUtil;
         database = databaseUtil;
     }
 
-    private static void connect() throws SQLException {
-        database.connectToMain();
+    private void connect() throws SQLException {
+        connection = database.connectToMain(connection);
     }
 
-    public Account authenticateUser(String email, String password, String ip) throws DatabaseException {
+    public Account authenticateUser(String email, String password, String ip) {
         String sql = String.format("SELECT * FROM accounts WHERE email='%s'", email);
         try {
             Statement statement = connection.createStatement();
@@ -67,7 +81,7 @@ public class AccountDAO {
             try {
                 connect();
                 return authenticateUser(email, password, ip);
-            } catch (SQLException ex) {
+            } catch (SQLException | NullPointerException ex) {
                 ex.printStackTrace();
             }
             return authenticateUser(email, password, ip);
@@ -176,7 +190,7 @@ public class AccountDAO {
         return null;
     }
 
-    public boolean activateAccount(String token) throws DatabaseException {
+    public boolean activateAccount(String token) {
         try {
             Statement statement = connection.createStatement();
 
