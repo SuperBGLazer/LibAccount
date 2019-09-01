@@ -2,7 +2,7 @@
 LibAccount is an api that allows users to create accounts and authenticate. This library connects to a MySQL database.
 
 ## Prerequisites
-In order for LibAccount to work you need a MySQL database.
+- MySQL Server
 
 ### MySQL installation (Ubuntu)
 
@@ -39,7 +39,8 @@ In order to use this in a project, simply add the maven repository and dependenc
 ```
 
 ##### Dependency
-``` <dependency>
+``` 
+   <dependency>
              <groupId>com.ninjamodding</groupId>
              <artifactId>LibAccount</artifactId>
              <version>1.2.4-SNAPSHOT</version>
