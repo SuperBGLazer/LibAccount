@@ -48,19 +48,40 @@ public class AccountDAO {
         database = databaseUtil;
     }
 
+    /**
+     * @param databaseConnection The connection to the MySQL database
+     * @param emailUtil          The email utility class that will be used to send email regarding account information
+     * @param databaseUtil       The database utility is used to restore a database connection if LibAccount lost connection.
+     * @return The AccountDAO object
+     */
     public static AccountDAO setup(Connection databaseConnection, EmailUtil emailUtil, DatabaseUtil databaseUtil) {
         instance = new AccountDAO(databaseConnection, databaseUtil, emailUtil);
         return instance;
     }
 
+    /**
+     *
+     * @return The current instance of AccountDAO
+     */
     public static AccountDAO getInstance() {
         return instance;
     }
 
+    /**
+     * This will connect to the database
+     * @throws SQLException If something goes wrong while connecting
+     */
     private void connect() throws SQLException {
         connection = database.connectToMain(connection);
     }
 
+    /**
+     *
+     * @param email User email
+     * @param password User password
+     * @param ip user ip
+     * @return A account if the authentaction was successful. Returns null if the account doesn't exist or if the password was wrong
+     */
     public Account authenticateUser(String email, String password, String ip) {
         String sql = String.format("SELECT * FROM accounts WHERE email='%s'", email);
         try {
@@ -106,6 +127,11 @@ public class AccountDAO {
         return null;
     }
 
+    /**
+     *
+     * @param id Account id
+     * @return A account if it exist.
+     */
     public Account getUser(int id) {
         try {
             Statement statement = connection.createStatement();
@@ -130,6 +156,11 @@ public class AccountDAO {
         return null;
     }
 
+    /**
+     *
+     * @param email User email
+     * @return A account if it exist
+     */
     public Account getUser(String email) {
         try {
             Statement statement = connection.createStatement();
@@ -154,6 +185,13 @@ public class AccountDAO {
         return null;
     }
 
+    /**
+     *
+     * @param statement The database statement used to select the account
+     * @param selectAccountSQL The SQL syntax used to select the account
+     * @return A account if it exist
+     * @throws SQLException If something went wrong while selecting the account
+     */
     private Account getAccount(Statement statement, String selectAccountSQL) throws SQLException {
         ResultSet resultSet = statement.executeQuery(selectAccountSQL);
 
@@ -169,6 +207,15 @@ public class AccountDAO {
         }
     }
 
+    /**
+     *
+     * @param userEmail User email
+     * @param password User password
+     * @param firstName User first name
+     * @param lastName User last name
+     * @return A account if it was successfully created
+     * @throws AccountAlreadyExistException
+     */
     public Account createUser(String userEmail, String password, String firstName, String lastName) throws AccountAlreadyExistException {
         try {
             Statement statement = connection.createStatement();
@@ -217,6 +264,11 @@ public class AccountDAO {
         return null;
     }
 
+    /**
+     * This will activate the account
+     * @param token the token that was sent in the email
+     * @return True if the account was activated
+     */
     public boolean activateAccount(String token) {
         try {
             Statement statement = connection.createStatement();
@@ -257,13 +309,17 @@ public class AccountDAO {
         return false;
     }
 
+    /**
+     *
+     * @param email User email
+     * @return The account id
+     */
     private int getID(String email) {
         try {
             Statement statement = connection.createStatement();
             String sql = String.format("SELECT id FROM accounts WHERE email='%s'", email);
             ResultSet resultSet = statement.executeQuery(sql);
             if (resultSet.next()) {
-                statement.close();
                 return resultSet.getInt("id");
             }
             statement.close();
@@ -284,10 +340,14 @@ public class AccountDAO {
         return -1;
     }
 
+    /**
+     * Creates a new account table
+     */
     private void createTable() {
         try {
             Statement statement = connection.createStatement();
             statement.execute(CREATE_TABLE);
+            statement.close();
         } catch (CommunicationsException | NullPointerException e) {
             try {
                 connect();
