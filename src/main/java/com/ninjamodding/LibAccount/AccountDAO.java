@@ -5,6 +5,7 @@
 package com.ninjamodding.LibAccount;
 
 import com.mysql.cj.jdbc.exceptions.CommunicationsException;
+import com.ninjamodding.LibAccount.exceptions.AccountAlreadyExistException;
 import com.ninjamodding.LibAccount.utils.DatabaseUtil;
 import com.ninjamodding.LibAccount.utils.EmailUtil;
 
@@ -168,14 +169,14 @@ public class AccountDAO {
         }
     }
 
-    public Account createUser(String userEmail, String password, String firstName, String lastName) {
+    public Account createUser(String userEmail, String password, String firstName, String lastName) throws AccountAlreadyExistException {
         try {
             Statement statement = connection.createStatement();
             String securePassword = Password.getSaltedHash(password);
 
             // Add the account to the database
             String addAccountSQL = String.format("INSERT INTO accounts (email, password, firstName, lastName, activated) " +
-                    "VALUE ('%s', '%s', '%s', '%s', FALSE)", email, securePassword, firstName, lastName);
+                    "VALUE ('%s', '%s', '%s', '%s', FALSE)", userEmail, securePassword, firstName, lastName);
             statement.execute(addAccountSQL);
 
             // Get the account id
@@ -202,6 +203,10 @@ public class AccountDAO {
                 ex.printStackTrace();
             }
             return createUser(userEmail, password, firstName, lastName);
+        } catch (SQLIntegrityConstraintViolationException e) {
+            if (e.getMessage().contains("Duplicate entry")) {
+                throw new AccountAlreadyExistException("Account with the email " + userEmail + " already exist!");
+            }
         } catch (SQLSyntaxErrorException e) {
             createTable();
             return createUser(userEmail, password, firstName, lastName);

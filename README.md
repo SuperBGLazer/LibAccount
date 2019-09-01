@@ -9,7 +9,7 @@ LibAccount is an api that allows users to create accounts and authenticate. This
 ` <dependency>
              <groupId>com.ninjamodding</groupId>
              <artifactId>LibAccount</artifactId>
-             <version>1.2.4-SNAPSHOT</version>
+             <version>1.2.5-SNAPSHOT</version>
              <scope>compile</scope>
    </dependency>`
    

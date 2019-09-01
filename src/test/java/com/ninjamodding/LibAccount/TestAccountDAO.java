@@ -16,6 +16,7 @@
 
 package com.ninjamodding.LibAccount;
 
+import com.ninjamodding.LibAccount.exceptions.AccountAlreadyExistException;
 import com.ninjamodding.LibAccount.utils.DatabaseUtil;
 import com.ninjamodding.LibAccount.utils.EmailUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +35,22 @@ class TestAccountDAO {
         emailUtil = account -> {
         };
         databaseUtil = new DatabaseUtilTest();
+    }
+
+    @Test
+    void createUser() {
+        try {
+            AccountDAO.setup(databaseUtil.connectToMain(database), emailUtil, databaseUtil);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        assert AccountDAO.getInstance() != null;
+        try {
+            AccountDAO.getInstance().createUser("testing@example.com", "1234", "Testing", "Tester");
+            assert AccountDAO.getInstance().getUser("testing@example.com") != null;
+        } catch (AccountAlreadyExistException e) {
+            assert true;
+        }
     }
 
     @Test
