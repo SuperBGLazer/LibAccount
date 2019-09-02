@@ -39,16 +39,17 @@ In order to use this in a project, simply add the maven repository and dependenc
 ```
 
 ##### Dependency
-``` 
+  ``` 
    <dependency>
              <groupId>com.ninjamodding</groupId>
              <artifactId>LibAccount</artifactId>
              <version>1.2.6-SNAPSHOT</version>
              <scope>compile</scope>
-   </dependency>```
-   
+   </dependency>
+   ```
    ## Tests
    To run the test, you must set some enverment varibles in order to connect to the database.
+   
    ```
    $ export user=(Your MySQL username)
    $ export password=(Your MySQL password)
