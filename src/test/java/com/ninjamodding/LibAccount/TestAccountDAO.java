@@ -61,6 +61,17 @@ class TestAccountDAO {
             e.printStackTrace();
         }
         assert AccountDAO.getInstance() != null;
-        AccountDAO.getInstance().authenticateUser("testing@example.com", "testing", "");
+        AccountDAO.getInstance().authenticateUser("testing@example.com", "testing");
+    }
+
+    @Test
+    void createTable() {
+        try {
+            AccountDAO.setup(databaseUtil.connectToMain(database), emailUtil, databaseUtil);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        assert AccountDAO.getInstance() != null;
+        AccountDAO.getInstance().createTable();
     }
 }

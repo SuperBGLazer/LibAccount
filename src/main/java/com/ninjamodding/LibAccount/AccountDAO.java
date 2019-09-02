@@ -1,5 +1,17 @@
 /*
- * Copyright (c) 2019 Breyon Gunn.
+ *    Copyright 2019 Breyon Gunn
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 
 package com.ninjamodding.LibAccount;
@@ -20,7 +32,8 @@ public class AccountDAO {
     private static EmailUtil email;
     private static DatabaseUtil database;
 
-    private static final String CREATE_TABLE = "CREATE TABLE `accounts` (\n" +
+    private static final String CREATE_ACCOUNT_TABLE = "DROP TABLE IF EXISTS `tokens`;\n" +
+            "CREATE TABLE `accounts` (\n" +
             "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
             "  `firstName` varchar(255) DEFAULT NULL,\n" +
             "  `lastName` varchar(255) DEFAULT NULL,\n" +
@@ -32,6 +45,16 @@ public class AccountDAO {
             "  UNIQUE KEY `accounts_email_uindex` (`email`),\n" +
             "  KEY `id` (`id`)\n" +
             ") ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;";
+
+    private static final String CREATE_TOKEN_TABLE = "DROP TABLE IF EXISTS `tokens`;\n" +
+            "CREATE TABLE `tokens` (\n" +
+            "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+            "  `accountID` int(11) NOT NULL,\n" +
+            "  `token` varchar(255) NOT NULL,\n" +
+            "  PRIMARY KEY (`id`),\n" +
+            "  KEY `tokens_ibfk_1` (`accountID`),\n" +
+            "  CONSTRAINT `tokens_ibfk_1` FOREIGN KEY (`accountID`) REFERENCES `accounts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE\n" +
+            ") ENGINE=InnoDB AUTO_INCREMENT=1572 DEFAULT CHARSET=latin1;\n";
 
     @Deprecated
     public AccountDAO(Connection databaseConnection, DatabaseUtil databaseUtil, EmailUtil emailUtil) {
@@ -79,10 +102,9 @@ public class AccountDAO {
      *
      * @param email User email
      * @param password User password
-     * @param ip user ip
      * @return A account if the authentaction was successful. Returns null if the account doesn't exist or if the password was wrong
      */
-    public Account authenticateUser(String email, String password, String ip) {
+    public Account authenticateUser(String email, String password) {
         String sql = String.format("SELECT * FROM accounts WHERE email='%s'", email);
         try {
             Statement statement = connection.createStatement();
@@ -95,13 +117,6 @@ public class AccountDAO {
                 int id = resultSet.getInt("id");
                 String token = UUID.randomUUID().toString();
                 String pubToken = UUID.randomUUID().toString();
-//                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//                Date date = new Date();
-//
-//                String addTokenSQL = "INSERT INTO tokens (accountID, token, loginToken, pub_token, date, ip) " +
-//                        String.format("VALUES (%s,'%s', TRUE, '%s', '%s', '%s')", id, token, pubToken,
-//                                dateFormat.format(date), ip);
-//                statement.execute(addTokenSQL);
 
 
                 if (Password.check(password, databasePassword) && accountActivated) {
@@ -112,14 +127,14 @@ public class AccountDAO {
         } catch (CommunicationsException | NullPointerException e) {
             try {
                 connect();
-                return authenticateUser(email, password, ip);
+                return authenticateUser(email, password);
             } catch (SQLException | NullPointerException ex) {
                 ex.printStackTrace();
             }
-            return authenticateUser(email, password, ip);
+            return authenticateUser(email, password);
         } catch (SQLSyntaxErrorException e) {
             createTable();
-            return authenticateUser(email, password, ip);
+            return authenticateUser(email, password);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | SQLException e) {
             e.printStackTrace();
             return null;
@@ -234,8 +249,8 @@ public class AccountDAO {
 
             // Create the account token
             String token = UUID.randomUUID().toString();
-            String addTokenSQL = String.format("INSERT INTO tokens (accountID, token, loginToken) VALUES " +
-                    "(%s, '%s', FALSE )", Integer.toString(accountID), token);
+            String addTokenSQL = String.format("INSERT INTO tokens (accountID, token) VALUES " +
+                    "(%s, '%s')", Integer.toString(accountID), token);
             statement.execute(addTokenSQL);
             Account account = new Account(firstName, lastName, userEmail, token, "", -1);
             email.sendVerifyEmail(account);
@@ -343,10 +358,11 @@ public class AccountDAO {
     /**
      * Creates a new account table
      */
-    private void createTable() {
+    void createTable() {
         try {
             Statement statement = connection.createStatement();
-            statement.execute(CREATE_TABLE);
+            statement.execute(CREATE_ACCOUNT_TABLE);
+            statement.execute(CREATE_TOKEN_TABLE);
             statement.close();
         } catch (CommunicationsException | NullPointerException e) {
             try {
