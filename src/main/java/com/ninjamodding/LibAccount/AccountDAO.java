@@ -32,8 +32,7 @@ public class AccountDAO {
     private static EmailUtil email;
     private static DatabaseUtil database;
 
-    private static final String CREATE_ACCOUNT_TABLE = "DROP TABLE IF EXISTS `tokens`;\n" +
-            "CREATE TABLE `accounts` (\n" +
+    private static final String CREATE_ACCOUNT_TABLE = "CREATE TABLE `accounts` (\n" +
             "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
             "  `firstName` varchar(255) DEFAULT NULL,\n" +
             "  `lastName` varchar(255) DEFAULT NULL,\n" +
