@@ -9,7 +9,7 @@ LibAccount is an api that allows users to create accounts and authenticate. This
 1. Install MySQL
 ```
 $ sudo apt update
-$ sudo apt install mysql-server
+$ sudo apt install mysql-server maven git
 ```
 
 2. Configure MySQL root user
