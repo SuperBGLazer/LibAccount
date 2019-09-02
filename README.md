@@ -9,7 +9,7 @@ LibAccount is an api that allows users to create accounts and authenticate. This
 1. Install MySQL
 ```
 $ sudo apt update
-$ sudo apt install mysql-server
+$ sudo apt install mysql-server maven git
 ```
 
 2. Configure MySQL root user
@@ -39,11 +39,31 @@ In order to use this in a project, simply add the maven repository and dependenc
 ```
 
 ##### Dependency
-``` 
+  ``` 
    <dependency>
              <groupId>com.ninjamodding</groupId>
              <artifactId>LibAccount</artifactId>
              <version>1.2.6-SNAPSHOT</version>
              <scope>compile</scope>
-   </dependency>```
+   </dependency>
+   ```
+   ## Tests
+   To run the test, you must set some enverment varibles in order to connect to the database.
    
+   ```
+   $ export user=(Your MySQL username)
+   $ export password=(Your MySQL password)
+   $ export database=LibAccount
+   $ export ip=localhost
+   ```
+   
+   Next clone the repository.
+   ```
+   $ git clone https://github.com/ninja-modding/LibAccount.git
+   $ cd LibAccount
+   ```
+   
+   Finaly run the tests with maven.
+   ```
+   mvn test
+   ```
