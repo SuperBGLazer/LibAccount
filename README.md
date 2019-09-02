@@ -47,3 +47,22 @@ In order to use this in a project, simply add the maven repository and dependenc
              <scope>compile</scope>
    </dependency>```
    
+   ## Tests
+   To run the test, you must set some enverment varibles in order to connect to the database.
+   ```
+   $ export user=(Your MySQL username)
+   $ export password=(Your MySQL password)
+   $ export database=LibAccount
+   $ export ip=localhost
+   ```
+   
+   Next clone the repository.
+   ```
+   $ git clone https://github.com/ninja-modding/LibAccount.git
+   $ cd LibAccount
+   ```
+   
+   Finaly run the tests with maven.
+   ```
+   mvn test
+   ```
