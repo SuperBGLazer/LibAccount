@@ -27,6 +27,7 @@ public class DatabaseUtilTest implements DatabaseUtil {
     public Connection connectToMain(Connection nullConnection) throws SQLException {
         try {
             MysqlDataSource dataSource = new MysqlDataSource();
+            dataSource.setAutoReconnect(true);
             dataSource.setUser(System.getenv("user"));
             dataSource.setPassword(System.getenv("password"));
             dataSource.setServerName(System.getenv("ip"));
@@ -40,6 +41,11 @@ public class DatabaseUtilTest implements DatabaseUtil {
             e.printStackTrace();
             assert false;
         }
-        return null;
+//        Connection connection = DriverManager.getConnection(
+//                String.format("jdbc:mariadb://%s:3306/%s?user=%s&password=%s", System.getenv("ip"),
+//                        System.getenv("database"), System.getenv("user"),
+//                        System.getenv("password")));
+//        return connection;
+        return nullConnection;
     }
 }

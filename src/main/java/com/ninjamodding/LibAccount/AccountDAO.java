@@ -32,28 +32,29 @@ public class AccountDAO {
     private static EmailUtil email;
     private static DatabaseUtil database;
 
-    private static final String CREATE_ACCOUNT_TABLE = "CREATE TABLE `accounts` (\n" +
-            "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
-            "  `firstName` varchar(255) DEFAULT NULL,\n" +
-            "  `lastName` varchar(255) DEFAULT NULL,\n" +
-            "  `email` varchar(255) NOT NULL,\n" +
-            "  `password` varchar(255) DEFAULT NULL,\n" +
-            "  `activated` tinyint(1) DEFAULT NULL,\n" +
-            "  `developer` tinyint(1) DEFAULT '0',\n" +
-            "  PRIMARY KEY (`id`),\n" +
-            "  UNIQUE KEY `accounts_email_uindex` (`email`),\n" +
-            "  KEY `id` (`id`)\n" +
-            ") ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;";
+    private static final String CREATE_ACCOUNT_TABLE =
+            "CREATE TABLE IF NOT EXISTS `accounts` (\n" +
+                    "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                    "  `firstName` varchar(255) DEFAULT NULL,\n" +
+                    "  `lastName` varchar(255) DEFAULT NULL,\n" +
+                    "  `email` varchar(255) NOT NULL,\n" +
+                    "  `password` varchar(255) DEFAULT NULL,\n" +
+                    "  `activated` tinyint(1) DEFAULT NULL,\n" +
+                    "  `developer` tinyint(1) DEFAULT '0',\n" +
+                    "  PRIMARY KEY (`id`),\n" +
+                    "  UNIQUE KEY `accounts_email_uindex` (`email`),\n" +
+                    "  KEY `id` (`id`)\n" +
+                    ") ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1\n";
 
-    private static final String CREATE_TOKEN_TABLE = "DROP TABLE IF EXISTS `tokens`;\n" +
-            "CREATE TABLE `tokens` (\n" +
-            "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
-            "  `accountID` int(11) NOT NULL,\n" +
-            "  `token` varchar(255) NOT NULL,\n" +
-            "  PRIMARY KEY (`id`),\n" +
-            "  KEY `tokens_ibfk_1` (`accountID`),\n" +
-            "  CONSTRAINT `tokens_ibfk_1` FOREIGN KEY (`accountID`) REFERENCES `accounts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE\n" +
-            ") ENGINE=InnoDB AUTO_INCREMENT=1572 DEFAULT CHARSET=latin1;\n";
+    private static final String CREATE_TOKEN_TABLE =
+            "CREATE TABLE IF NOT EXISTS `tokens` (\n" +
+                    "                          `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                    "                          `accountID` int(11) NOT NULL,\n" +
+                    "                          `token` varchar(255) NOT NULL,\n" +
+                    "                          PRIMARY KEY (`id`),\n" +
+                    "                          KEY `tokens_ibfk_1` (`accountID`),\n" +
+                    "                          CONSTRAINT `tokens_ibfk_1` FOREIGN KEY (`accountID`) REFERENCES `accounts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE\n" +
+                    ") ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1\n";
 
     @Deprecated
     public AccountDAO(Connection databaseConnection, DatabaseUtil databaseUtil, EmailUtil emailUtil) {
