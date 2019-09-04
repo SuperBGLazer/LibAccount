@@ -45,7 +45,7 @@ In order to use this in a project, simply add the maven repository and dependenc
    <dependency>
              <groupId>com.ninjamodding</groupId>
              <artifactId>LibAccount</artifactId>
-             <version>1.2.6-SNAPSHOT</version>
+             <version>1.2.7-SNAPSHOT</version>
              <scope>compile</scope>
    </dependency>
    ```
