@@ -11,3 +11,4 @@ before_install:
   - export password=
   - export ip=localhost
   - export database=LibAccount
+script: mvn test

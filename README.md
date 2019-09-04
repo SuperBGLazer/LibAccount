@@ -1,4 +1,6 @@
 # **LibAccount**
+[![Build Status](https://travis-ci.com/ninja-modding/LibAccount.svg?branch=master)](https://travis-ci.com/ninja-modding/LibAccount)
+
 LibAccount is an api that allows users to create accounts and authenticate. This library connects to a MySQL database.
 
 ## Prerequisites
