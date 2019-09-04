@@ -48,7 +48,7 @@ In order to use this in a project, simply add the maven repository and dependenc
    </dependency>
    ```
    ## Tests
-   To run the test, you must set some enverment varibles in order to connect to the database.
+   To run the test, you must set some environment variables in order to connect to the database.
    
    ```
    $ export user=(Your MySQL username)
@@ -63,7 +63,7 @@ In order to use this in a project, simply add the maven repository and dependenc
    $ cd LibAccount
    ```
    
-   Finaly run the tests with maven.
+   Finally run the tests with maven.
    ```
    mvn test
    ```
