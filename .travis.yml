@@ -1,14 +1,13 @@
 language: java
 services: mysql
 dist: bionic
-env:
-  - user=travis
-  - password=
-  - ip=localhost
-  - database=LibAccount
 jdk:
   - oraclejdk11
   - openjdk10
   - openjdk11
 before_install:
   - mysql -e 'CREATE DATABASE LibAccount;'
+  - export user=travis
+  - export password=
+  - export ip=localhost
+  - export database=LibAccount
