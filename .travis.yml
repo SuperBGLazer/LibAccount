@@ -12,4 +12,7 @@ before_install:
   - export ip=localhost
   - export database=LibAccount
 script: mvn test
-install: false
+install: skip
+cache:
+  directories:
+    - $HOME/.m2
