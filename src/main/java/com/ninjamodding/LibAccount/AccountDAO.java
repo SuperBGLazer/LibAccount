@@ -100,11 +100,10 @@ public class AccountDAO {
 
     /**
      *
-     * @param email User email
-     * @param password User password
+     * @param credentials User credentials
      * @return A account if the authentaction was successful. Returns null if the account doesn't exist or if the password was wrong
      */
-    public UserAccount authenticateUser(String email, String password) {
+    public UserAccount authenticateUser(Credentials credentials) {
         String sql = String.format("SELECT * FROM accounts WHERE email='%s'", email);
         try {
             Statement statement = connection.createStatement();
@@ -119,22 +118,22 @@ public class AccountDAO {
                 String pubToken = UUID.randomUUID().toString();
 
 
-                if (Password.check(password, databasePassword) && accountActivated) {
-                    return new UserAccount(firstName, lastName, email, token, pubToken, id);
+                if (Password.check(credentials.getPassword(), databasePassword) && accountActivated) {
+                    return new UserAccount(firstName, lastName, credentials.getEmail(), token, pubToken, id);
                 }
             }
             statement.close();
         } catch (CommunicationsException | NullPointerException e) {
             try {
                 connect();
-                return authenticateUser(email, password);
+                return authenticateUser(credentials);
             } catch (SQLException | NullPointerException ex) {
                 ex.printStackTrace();
             }
-            return authenticateUser(email, password);
+            return authenticateUser(credentials);
         } catch (SQLSyntaxErrorException e) {
             createTable();
-            return authenticateUser(email, password);
+            return authenticateUser(credentials);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | SQLException e) {
             e.printStackTrace();
             return null;
@@ -224,25 +223,24 @@ public class AccountDAO {
 
     /**
      *
-     * @param userEmail User email
-     * @param password User password
+     * @param credentials User credentials
      * @param firstName User first name
      * @param lastName User last name
      * @return A account if it was successfully created
      * @throws AccountAlreadyExistException
      */
-    public UserAccount createUser(String userEmail, String password, String firstName, String lastName) throws AccountAlreadyExistException {
+    public UserAccount createUser(Credentials credentials, String firstName, String lastName) throws AccountAlreadyExistException {
         try {
             Statement statement = connection.createStatement();
-            String securePassword = Password.getSaltedHash(password);
+            String securePassword = Password.getSaltedHash(credentials.getPassword());
 
             // Add the account to the database
             String addAccountSQL = String.format("INSERT INTO accounts (email, password, firstName, lastName, activated) " +
-                    "VALUE ('%s', '%s', '%s', '%s', FALSE)", userEmail, securePassword, firstName, lastName);
+                    "VALUE ('%s', '%s', '%s', '%s', FALSE)", credentials.getEmail(), securePassword, firstName, lastName);
             statement.execute(addAccountSQL);
 
             // Get the account id
-            int accountID = getID(userEmail);
+            int accountID = getID(credentials.getEmail());
             if (accountID == -1) {
                 return null;
             }
@@ -252,7 +250,7 @@ public class AccountDAO {
             String addTokenSQL = String.format("INSERT INTO tokens (accountID, token) VALUES " +
                     "(%s, '%s')", Integer.toString(accountID), token);
             statement.execute(addTokenSQL);
-            UserAccount userAccount = new UserAccount(firstName, lastName, userEmail, token, "", -1);
+            UserAccount userAccount = new UserAccount(firstName, lastName, credentials.getEmail(), token, "", -1);
             email.sendVerifyEmail(userAccount);
             statement.close();
 
@@ -260,18 +258,18 @@ public class AccountDAO {
         } catch (CommunicationsException | NullPointerException e) {
             try {
                 connect();
-                return createUser(userEmail, password, firstName, lastName);
+                return createUser(credentials, firstName, lastName);
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
-            return createUser(userEmail, password, firstName, lastName);
+            return createUser(credentials, firstName, lastName);
         } catch (SQLIntegrityConstraintViolationException e) {
             if (e.getMessage().contains("Duplicate entry")) {
-                throw new AccountAlreadyExistException("Account with the email " + userEmail + " already exist!");
+                throw new AccountAlreadyExistException("Account with the email " + credentials.getEmail() + " already exist!");
             }
         } catch (SQLSyntaxErrorException e) {
             createTable();
-            return createUser(userEmail, password, firstName, lastName);
+            return createUser(credentials, firstName, lastName);
         } catch (SQLException | InvalidKeySpecException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }

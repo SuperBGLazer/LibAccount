@@ -46,7 +46,7 @@ class TestAccountDAO {
         }
         assert AccountDAO.getInstance() != null;
         try {
-            AccountDAO.getInstance().createUser("testing@example.com", "1234", "Testing", "Tester");
+            AccountDAO.getInstance().createUser(new Credentials("testing@example.com", "1234"), "Testing", "Tester");
             assert AccountDAO.getInstance().getUser("testing@example.com") != null;
         } catch (AccountAlreadyExistException e) {
             assert true;
@@ -61,7 +61,7 @@ class TestAccountDAO {
             e.printStackTrace();
         }
         assert AccountDAO.getInstance() != null;
-        AccountDAO.getInstance().authenticateUser("testing@example.com", "testing");
+        AccountDAO.getInstance().authenticateUser(new Credentials("testing@example.com", "testing"));
     }
 
     @Test
