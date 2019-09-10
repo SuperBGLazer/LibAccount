@@ -104,7 +104,7 @@ public class AccountDAO {
      * @param password User password
      * @return A account if the authentaction was successful. Returns null if the account doesn't exist or if the password was wrong
      */
-    public Account authenticateUser(String email, String password) {
+    public UserAccount authenticateUser(String email, String password) {
         String sql = String.format("SELECT * FROM accounts WHERE email='%s'", email);
         try {
             Statement statement = connection.createStatement();
@@ -120,7 +120,7 @@ public class AccountDAO {
 
 
                 if (Password.check(password, databasePassword) && accountActivated) {
-                    return new Account(firstName, lastName, email, token, pubToken, id);
+                    return new UserAccount(firstName, lastName, email, token, pubToken, id);
                 }
             }
             statement.close();
@@ -147,7 +147,7 @@ public class AccountDAO {
      * @param id Account id
      * @return A account if it exist.
      */
-    public Account getUser(int id) {
+    public UserAccount getUser(int id) {
         try {
             Statement statement = connection.createStatement();
 
@@ -176,7 +176,7 @@ public class AccountDAO {
      * @param email User email
      * @return A account if it exist
      */
-    public Account getUser(String email) {
+    public UserAccount getUser(String email) {
         try {
             Statement statement = connection.createStatement();
 
@@ -207,15 +207,15 @@ public class AccountDAO {
      * @return A account if it exist
      * @throws SQLException If something went wrong while selecting the account
      */
-    private Account getAccount(Statement statement, String selectAccountSQL) throws SQLException {
+    private UserAccount getAccount(Statement statement, String selectAccountSQL) throws SQLException {
         ResultSet resultSet = statement.executeQuery(selectAccountSQL);
 
         if (resultSet.next()) {
-            Account account = new Account(resultSet.getString("firstName"),
+            UserAccount userAccount = new UserAccount(resultSet.getString("firstName"),
                     resultSet.getString("lastName"), resultSet.getString("email"),
                     resultSet.getInt("id"));
             statement.close();
-            return account;
+            return userAccount;
         } else {
             statement.close();
             return null;
@@ -231,7 +231,7 @@ public class AccountDAO {
      * @return A account if it was successfully created
      * @throws AccountAlreadyExistException
      */
-    public Account createUser(String userEmail, String password, String firstName, String lastName) throws AccountAlreadyExistException {
+    public UserAccount createUser(String userEmail, String password, String firstName, String lastName) throws AccountAlreadyExistException {
         try {
             Statement statement = connection.createStatement();
             String securePassword = Password.getSaltedHash(password);
@@ -252,11 +252,11 @@ public class AccountDAO {
             String addTokenSQL = String.format("INSERT INTO tokens (accountID, token) VALUES " +
                     "(%s, '%s')", Integer.toString(accountID), token);
             statement.execute(addTokenSQL);
-            Account account = new Account(firstName, lastName, userEmail, token, "", -1);
-            email.sendVerifyEmail(account);
+            UserAccount userAccount = new UserAccount(firstName, lastName, userEmail, token, "", -1);
+            email.sendVerifyEmail(userAccount);
             statement.close();
 
-            return account;
+            return userAccount;
         } catch (CommunicationsException | NullPointerException e) {
             try {
                 connect();

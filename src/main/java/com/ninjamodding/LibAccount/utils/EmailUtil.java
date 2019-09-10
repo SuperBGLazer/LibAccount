@@ -16,8 +16,8 @@
 
 package com.ninjamodding.LibAccount.utils;
 
-import com.ninjamodding.LibAccount.Account;
+import com.ninjamodding.LibAccount.UserAccount;
 
 public interface EmailUtil {
-    void sendVerifyEmail(Account account);
+    void sendVerifyEmail(UserAccount userAccount);
 }
