@@ -16,7 +16,9 @@
 
 package com.ninjamodding.LibAccount;
 
-public class Credentials {
+import java.io.Serializable;
+
+public class Credentials implements Serializable {
     private String email, password;
 
     public Credentials(String email, String password) {
