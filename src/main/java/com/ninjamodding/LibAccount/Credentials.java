@@ -17,13 +17,19 @@
 package com.ninjamodding.LibAccount;
 
 import java.io.Serializable;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 public class Credentials implements Serializable {
     private String email, password;
 
     public Credentials(String email, String password) {
         this.email = email;
-        this.password = password;
+        try {
+            this.password = Password.getSaltedHash(password);
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getEmail() {

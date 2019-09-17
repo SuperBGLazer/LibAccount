@@ -23,7 +23,7 @@
 
     <groupId>com.ninjamodding</groupId>
     <artifactId>LibAccount</artifactId>
-    <version>1.2.9-SNAPSHOT</version>
+    <version>1.2.11-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -129,7 +129,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>RELEASE</version>
+            <version>5.5.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -29,5 +29,5 @@ public interface Account {
 
     void setEmail(String email);
 
-    int getID();
+    int getId();
 }

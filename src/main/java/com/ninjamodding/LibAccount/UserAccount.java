@@ -63,7 +63,7 @@ public class UserAccount implements Account {
         return token;
     }
 
-    public int getID() {
+    public int getId() {
         return accountID;
     }
 }
