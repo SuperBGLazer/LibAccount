@@ -25,11 +25,7 @@ public class Credentials implements Serializable {
 
     public Credentials(String email, String password) {
         this.email = email;
-        try {
-            this.password = Password.getSaltedHash(password);
-        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+        hashPasswordIfNeeded(password);
     }
 
     public String getEmail() {
@@ -45,6 +41,19 @@ public class Credentials implements Serializable {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        hashPasswordIfNeeded(password);
+    }
+
+    private void hashPasswordIfNeeded(String password) {
+        try {
+            Password.check("", password);
+            this.password = password;
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+            try {
+                this.password = Password.getSaltedHash(password);
+            } catch (InvalidKeySpecException | NoSuchAlgorithmException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 }
