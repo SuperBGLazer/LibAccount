@@ -48,10 +48,10 @@ public class Credentials implements Serializable {
         try {
             Password.check("", password);
             this.password = password;
-        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException | IllegalStateException e) {
             try {
                 this.password = Password.getSaltedHash(password);
-            } catch (InvalidKeySpecException | NoSuchAlgorithmException ex) {
+            } catch (InvalidKeySpecException | NoSuchAlgorithmException | NullPointerException ex) {
                 ex.printStackTrace();
             }
         }
